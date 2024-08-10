@@ -12,12 +12,11 @@ api_hash = '1f08e6980689fa2e2d558f16a0d7bdcc'
 phone = '+998956466040'
 client = TelegramClient('account', api_id, api_hash)
 
-# Kanal va sharhlar fayllarini yuklash
-with open('channels.txt', 'r') as file:
-    channels = [line.strip() for line in file.readlines()]
+with open('k.txt', 'r') as file:
+    channels = [int(line.strip().replace('-100', '')) for line in file.readlines()]
 
-with open('kanal.txt', 'r') as file:
-    kanal = [line.strip() for line in file.readlines()]
+with open('ch.txt', 'r') as file:
+    kanal = [int(line.strip().replace('-100', '')) for line in file.readlines()]
 
 
 with open('texts.txt', 'r') as file:
@@ -39,20 +38,22 @@ async def main():
     print("Dialogs: ", dialogs)
 
     # Kanallarni filtrlash
-    channel_ids = [dialog.id for dialog in dialogs.chats if hasattr(dialog, 'username') and dialog.username in channels]
-    kanal_id = [dialog.id for dialog in dialogs.chats if hasattr(dialog, 'username') and dialog.username in kanal]
+    # channel_ids = [dialog.id for dialog in dialogs.chats if hasattr(dialog, 'username') and dialog.username in channels]
+    # kanal_id = [dialog.id for dialog in dialogs.chats if hasattr(dialog, 'username') and dialog.username in kanal]
+    # channel_ids = [channels]
+    # kanal_id = [kanal]
 
     
     # Filtrlangan kanallarni chop etish
-    print("Filtrlangan kanallar: ", channel_ids)
+    print("Filtrlangan kanallar: ", kanal)
 
-    @client.on(events.NewMessage(chats=channel_ids))
+    @client.on(events.NewMessage(chats=channels))
     async def handler(event):
         try:
             # Forward qilingan xabarlarni tekshirish
-            if event.message.fwd_from :
-                print(event.message.fwd_from.from_id.channel_id in kanal_id)
-                print("ID", channel_ids)
+            print("YANGI HABAR")
+            if event.message.fwd_from and event.message.fwd_from.from_id.channel_id in kanal :
+                print(event.message.fwd_from.from_id.channel_id in kanal)
                 print("ID", event.message.fwd_from.from_id.channel_id)
                 print("Forward qilingan kanal xabari aniqlandi.")
                 comment = random.choice(comments)
@@ -78,3 +79,4 @@ with client:
 
 # MessageFwdHeader(
 #      from_id=PeerChannel(channel_id=2214802039), from_name=None, channel_post=30, post_author=None, saved_from_peer=PeerChannel(channel_id=2214802039), saved_from_msg_id=30, saved_from_id=None, saved_from_name=None, saved_date=None, psa_type=None)
+
